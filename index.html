@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Steel Tools</title>
+   
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <button class="menu-toggle" onclick="toggleMenu()">☰ Menu</button>
+
+    <div class="sidebar">
+        <h2> STEEL TOOLS</h2>
+        <div class="nav-item active" onclick="showPage('gaugePage', this)">Gauge Converter</div>
+        <div class="nav-item" onclick="showPage('sootarPage', this)">Sootar Converter</div>
+        <div class="nav-item" onclick="showPage('cuttingPage', this)">Cutting Calculator</div>
+    </div>
+
+    <div class="main-content">
+        
+        <div id="gaugePage" class="feature-page active">
+            <div class="card">
+                <h1>Steel Gauge Converter</h1>
+                <div class="input-group">
+                    <label>Enter Gauge (3-30)</label>
+                    <input type="number" id="gaugeInput" placeholder="e.g. 16" oninput="runGaugeConvert()">
+                </div>
+                <div style="text-align: center; margin: 10px; color: #999;">— OR —</div>
+                <div class="input-group">
+                    <label>Enter MM Thickness</label>
+                    <input type="number" id="mmGaugeInput" step="0.01" placeholder="e.g. 1.52" oninput="runMMToGauge()">
+                </div>
+                <div class="result-box">
+                    <div id="gaugeRes" class="result-val">---</div>
+                    <div id="gaugeRange" style="margin-top:10px; font-size: 0.9rem; color: #666;"></div>
+                </div>
+            </div>
+        </div>
+
+       <div id="sootarPage" class="feature-page">
+            <div class="card">
+                <h1>Sootar & Inch Scale</h1>
+                
+                <h3>Convert to Local Scale</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <div style="flex: 2;">
+                        <label>Enter Value</label>
+                        <input type="number" id="mmSootarInput" step="0.01" placeholder="e.g. 50.8 or 2.0" oninput="runSootarConvert()">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Unit</label>
+                        <select id="unitType" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px;" onchange="runSootarConvert()">
+                            <option value="mm">MM</option>
+                            <option value="inch">Inches</option>
+                        </select>
+                    </div>
+                </div>
+                <p style="font-size: 0.8rem; color: #888;">*Enter 2.5 in 'Inches' to get 2" 4 Sootars</p>
+                
+                <hr style="margin: 25px 0; border: 0; border-top: 1px solid #eee;">
+                
+                <h3>Sootar to MM</h3>
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex: 1;">
+                        <label>Inches"</label>
+                        <input type="number" id="inPart" placeholder="0" oninput="runInchToMM()">
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>Sootar</label>
+                        <input type="number" id="sootarPart" placeholder="0" oninput="runInchToMM()">
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>Half</label>
+                        <select id="halfPart" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px;" onchange="runInchToMM()">
+                            <option value="0">0</option>
+                            <option value="1">½</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="result-box">
+                    <div id="sootarRes" class="result-val">---</div>
+                    <div id="sootarDetail" style="margin-top:10px; font-size: 0.9rem; color: #666;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="cuttingPage" class="feature-page">
+            <div class="card">
+                <h1>Steel Cutting Calculator</h1>
+                <p style="color: #666; margin-bottom: 20px;">Calculate how many pieces you can cut from your steel sheet</p>
+
+                <h3 style="margin-top: 25px; color: var(--primary);">Steel Sheet Length</h3>
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                        <div class="input-group">
+                            <label>Inches</label>
+                            <input type="number" id="sheetLengthInch" placeholder="0" oninput="calculateCutting()">
+                        </div>
+                        <div class="input-group">
+                            <label>Sootar</label>
+                            <input type="number" id="sheetLengthSootar" placeholder="0" oninput="calculateCutting()">
+                        </div>
+                        <div class="input-group">
+                            <label>Half</label>
+                            <select id="sheetLengthHalf" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px;" onchange="calculateCutting()">
+                                <option value="0">0</option>
+                                <option value="1">½</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="color: var(--primary);">Customer Piece Length</h3>
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                        <div class="input-group">
+                            <label>Inches</label>
+                            <input type="number" id="pieceLengthInch" placeholder="0" oninput="calculateCutting()">
+                        </div>
+                        <div class="input-group">
+                            <label>Sootar</label>
+                            <input type="number" id="pieceLengthSootar" placeholder="0" oninput="calculateCutting()">
+                        </div>
+                        <div class="input-group">
+                            <label>Half</label>
+                            <select id="pieceLengthHalf" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px;" onchange="calculateCutting()">
+                                <option value="0">0</option>
+                                <option value="1">½</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-box">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Total Pieces</div>
+                            <div id="totalPieces" class="result-val">0</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Scrap Left</div>
+                            <div id="scrapResult" class="result-val" style="color: #e67e22;">---</div>
+                        </div>
+                    </div>
+                    <div id="cuttingDetails" style="margin-top: 15px; font-size: 0.9rem; color: #666; line-height: 1.6;"></div>
+                </div>
+            </div>
+        </div>
+<script src="script.js"></script>
+</body>
+</html>
