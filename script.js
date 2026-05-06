@@ -69,6 +69,27 @@
         rangeInfo.innerHTML = `Closest Match: ${closest.g} Gauge <br> Range: ${closest.min} mm - ${closest.max} mm`;
     }
 
+    function runInchToMM() {
+        const inches = parseInt(document.getElementById('inPart').value) || 0;
+        const sootars = parseInt(document.getElementById('sootarPart').value) || 0;
+        const sootPart = parseFloat(document.getElementById('halfPart').value) || 0;
+        
+        // Clear the MM input
+        document.getElementById('mmSootarInput').value = "";
+
+        const totalInches = inches + (sootars / 8) + (sootPart / 8);
+        const mmVal = totalInches * 25.4;
+        
+        if (totalInches === 0) {
+            document.getElementById('sootarRes').innerText = "---";
+            document.getElementById('sootarDetail').innerText = "";
+            return;
+        }
+
+        document.getElementById('sootarRes').innerText = mmVal.toFixed(2) + " mm";
+        document.getElementById('sootarDetail').innerText = `Total: ${totalInches.toFixed(3)}" inches`;
+    }
+
     function runSootarConvert() {
         let inputVal = parseFloat(document.getElementById('mmSootarInput').value);
         const unit = document.getElementById('unitType').value;
@@ -90,15 +111,18 @@
         const inches = Math.floor(totalInches);
         const fraction = totalInches - inches;
         
-        // 16 half-sootars in an inch
-        const totalHalfSootars = Math.round(fraction * 16);
-        const sootars = Math.floor(totalHalfSootars / 2);
-        const halfSootar = totalHalfSootars % 2;
+        // 32 quarter-sootars in an inch (8 sootars * 4 parts)
+        const totalQuarterSoots = Math.round(fraction * 32);
+        const sootars = Math.floor(totalQuarterSoots / 4);
+        const part = totalQuarterSoots % 4;
 
         let output = "";
         if (inches > 0) output += `${inches}" `;
         if (sootars > 0) output += `${sootars} Sootar `;
-        if (halfSootar > 0) output += `½ Sootar`;
+        
+        if (part === 1) output += `¼ (Sawa) Sootar`;
+        else if (part === 2) output += `½ (Half) Sootar`;
+        else if (part === 3) output += `¾ (Pona) Sootar`;
         
         document.getElementById('sootarRes').innerText = output || "0 Sootar";
         
@@ -111,34 +135,43 @@
     }
 
     // CUTTING CALCULATOR FUNCTIONS
-    function convertToInches(inches, sootars, halves) {
-        const half = parseInt(halves) || 0;
-        const soot = parseInt(sootars) || 0;
-        const inch = parseInt(inches) || 0;
+    function convertToInches(inches, sootars, parts) {
+        const p = parseFloat(parts) || 0;
+        const s = parseInt(sootars) || 0;
+        const i = parseInt(inches) || 0;
         
-        // 1 inch = 8 sootars = 16 half-sootars
-        return inch + (soot / 8) + (half / 16);
+        // 1 inch = 8 sootars
+        return i + (s / 8) + (p / 8);
     }
 
     function convertFromInches(decimalInches) {
-        if (decimalInches <= 0) return { inches: 0, sootars: 0, halves: 0 };
+        if (decimalInches <= 0) return { inches: 0, sootars: 0, parts: 0 };
         
         const inches = Math.floor(decimalInches);
         const fraction = decimalInches - inches;
         
-        // Convert fraction to half-sootars (16 per inch)
-        const totalHalfSootars = Math.round(fraction * 16);
-        const sootars = Math.floor(totalHalfSootars / 2);
-        const halves = totalHalfSootars % 2;
+        // Convert fraction to quarter-sootars (32 per inch)
+        const totalQuarterSoots = Math.round(fraction * 32);
+        const sootars = Math.floor(totalQuarterSoots / 4);
+        const partsCount = totalQuarterSoots % 4;
         
-        return { inches, sootars, halves };
+        let parts = 0;
+        if (partsCount === 1) parts = 0.25;
+        else if (partsCount === 2) parts = 0.5;
+        else if (partsCount === 3) parts = 0.75;
+        
+        return { inches, sootars, parts };
     }
 
     function formatSootarDisplay(obj) {
         let output = "";
         if (obj.inches > 0) output += `${obj.inches}"`;
         if (obj.sootars > 0) output += ` ${obj.sootars} S`;
-        if (obj.halves > 0) output += ` ½`;
+        
+        if (obj.parts === 0.25) output += ` ¼`;
+        else if (obj.parts === 0.5) output += ` ½`;
+        else if (obj.parts === 0.75) output += ` ¾`;
+        
         return output.trim() || "0";
     }
 
